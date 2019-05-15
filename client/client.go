@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -12,8 +13,18 @@ type Client struct {
 	http *http.Client
 }
 
-func New() (*Client, error) {
-	return &Client{http.DefaultClient}, nil
+func New(options ...Option) (*Client, error) {
+	c := Client{
+		http: http.DefaultClient,
+	}
+
+	for i := range options {
+		if err := options[i](&c); err != nil {
+			return nil, errors.Wrap(err, "cannot apply option")
+		}
+	}
+
+	return &c, nil
 }
 
 func (c *Client) GetAllGames(page int) ([]GameOverview, *ListingMeta, error) {

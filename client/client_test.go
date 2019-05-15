@@ -3,11 +3,12 @@ package client
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"net/http"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
-	c, err := New()
+	c, err := New(WithHttpClient(http.DefaultClient))
 
 	require.NoError(t, err)
 	assert.NotNil(t, c)
